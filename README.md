@@ -30,11 +30,13 @@
 ## 🛠️ 如何在本機執行
 
 ### 後端啟動
+後端原始碼：[點我觀看](https://github.com/vax68080-Ryan/Employee-Management-Backend.git)
 1. 確保已安裝 JDK 17 與 MySQL。
 2. 設定 `application.properties` 中的資料庫連線資訊。
 3. 執行 `./mvnw spring-boot:run`。
 
 ### 前端啟動
+前端原始碼：[點我觀看](https://github.com/vax68080-Ryan/Employee-Management-System.git)
 1. 進入前端目錄。
 2. 執行 `npm install` 安裝依賴 (備份時已排除 node_modules)。
 3. 執行 `ng serve` 並訪問 `http://localhost:4200`。
