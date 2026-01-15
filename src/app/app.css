@@ -1,0 +1,112 @@
+nav {
+  background-color: #333;
+  padding: 1rem;
+  margin-bottom: 20px;
+}
+nav a {
+  color: white;
+  margin-right: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+nav a:hover {
+  color: #a777e3;
+}
+
+/* 導覽列容器 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #343a40; /* 深灰色背景 */
+  color: white;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* 連結群組 */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 連結按鈕樣式 */
+.nav-links a {
+  color: #ccc;
+  text-decoration: none; /* 去掉底線 */
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 15px; /* 增加連結之間的距離 */
+  cursor: pointer; /* 確保滑鼠變手型 */
+  position: relative; /* 確保層級正確 */
+  z-index: 10;
+}
+
+/* 當前頁面的效果 (Active) */
+.nav-links a.active {
+  background-color: #007bff; /* 亮藍色底 */
+  color: white;
+  font-weight: bold;
+}
+
+/* app.css */
+.main-content {
+  /* 移除固定的內距或邊距，讓各頁面自行決定佈局 */
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 只有在導覽列存在時才套用的樣式 (可選) */
+nav.navbar + .main-content {
+  padding-top: 60px; /* 預留導覽列的高度 */
+}
+
+/* 讓導覽列固定在上方 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #343a40; /* 深灰色背景 */
+  color: white;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: white; /* 作用中或滑鼠移過去變亮白 */
+}
+
+/* 使用者名稱顯示區 */
+.user-name-display {
+  color: #ffc107; /* 黃色文字區分 */
+  font-weight: bold;
+  margin-right: 15px;
+  border-right: 1px solid #555;
+  padding-right: 15px;
+}
+
+/* 登出按鈕滑鼠移過去變紅 */
+.logout-btn:hover {
+  color: #ff6b6b !important;
+}
+
+.main-content {
+  padding: 20px;
+}

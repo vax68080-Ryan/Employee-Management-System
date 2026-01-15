@@ -1,0 +1,31 @@
+<nav class="navbar" *ngIf="showNavbar">
+  <div class="brand-title">企業資源管理系統</div>
+
+  <div class="nav-links">
+    <span class="user-name-display" *ngIf="userName">
+      <i class="fas fa-user-circle"></i> {{ userName }}
+      <span class="badge" *ngIf="userLevel === 1">(管理員)</span>
+    </span>
+
+    <a
+      routerLink="/employees"
+      routerLinkActive="active"
+      *ngIf="userLevel === 1"
+      style="cursor: pointer"
+    >
+      <i class="fas fa-users"></i> 員工資料
+    </a>
+
+    <a routerLink="/customers" routerLinkActive="active">
+      <i class="fas fa-briefcase"></i> 客戶資料
+    </a>
+
+    <a (click)="logout()" class="logout-btn" style="cursor: pointer">
+      <i class="fas fa-sign-out-alt"></i> 登出
+    </a>
+  </div>
+</nav>
+
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,222 @@
+<h2 class="system-title">客戶資料查詢系統</h2>
+
+<div class="form-wrapper">
+  <form [formGroup]="searchForm">
+    <div class="form-row">
+      <label>客戶編號</label>
+      <input type="text" formControlName="id" placeholder="查詢編號" />
+    </div>
+
+    <div class="form-row">
+      <label>聯絡人</label>
+      <input type="text" formControlName="name" placeholder="查詢姓名" />
+    </div>
+
+    <div class="form-row">
+      <label>業務員</label>
+      <input
+        type="text"
+        [value]="searchKeyword"
+        (input)="onEmployeeInput($event)"
+        placeholder="輸入姓名或員編搜尋..."
+        list="listEmployeeList"
+      />
+      <datalist id="listEmployeeList">
+        <option *ngFor="let emp of employees" [value]="emp.name + ' (' + emp.id + ')'"></option>
+      </datalist>
+      <input type="hidden" formControlName="salesEmployee" />
+    </div>
+
+    <div class="form-row">
+      <label>公司名稱</label>
+      <input type="text" formControlName="company" placeholder="查詢公司" />
+    </div>
+
+    <div class="form-row">
+      <label>客戶等級</label>
+      <select formControlName="level">
+        <option value="">所有等級</option>
+        <option *ngFor="let l of levels" [value]="l.name">{{ l.name }}</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>聯絡日</label>
+      <input type="date" formControlName="lastContactDate" />
+    </div>
+
+    <div class="form-row">
+      <label>電話</label>
+      <input type="text" formControlName="phone" placeholder="查詢電話" />
+    </div>
+
+    <div class="form-row">
+      <label>Email</label>
+      <input type="text" formControlName="email" placeholder="查詢 Email" />
+    </div>
+
+    <div class="button-group">
+      <button type="button" (click)="search()">查詢</button>
+      <button type="button" (click)="showAll()">顯示全部</button>
+      <button type="button" class="btn-export" (click)="exportData()">
+        <i class="fas fa-file-excel"></i> 匯出 Excel
+      </button>
+      <button
+        type="button"
+        class="btn-add"
+        (click)="navigateToAdd()"
+        style="background-color: #28a745; color: white"
+      >
+        <i class="fas fa-plus"></i> 新增客戶
+      </button>
+    </div>
+  </form>
+</div>
+
+<hr />
+
+<div class="toolbar">
+  <div class="pager">
+    <button type="button" (click)="prevPage()" [disabled]="currentPage <= 1">上一頁</button>
+    <span>第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁</span>
+    <button type="button" (click)="nextPage()" [disabled]="currentPage >= totalPages">
+      下一頁
+    </button>
+  </div>
+  <div class="page-size">
+    每頁
+    <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+      <option [ngValue]="3">3</option>
+      <option [ngValue]="5">5</option>
+      <option [ngValue]="10">10</option>
+    </select>
+    筆
+  </div>
+</div>
+
+<div class="batch-toolbar" *ngIf="selectedIds.size > 0">
+  <div class="batch-info">
+    <i class="fas fa-check-circle"></i> 已選取
+    <strong>{{ isSelectAllPages ? totalElements : selectedIds.size }}</strong> 筆資料。
+
+    <span *ngIf="!isSelectAllPages && totalElements > selectedIds.size" style="margin-left: 10px">
+      (
+      <a
+        href="javascript:void(0)"
+        (click)="selectAllTotal()"
+        style="text-decoration: underline; color: #007bff; font-weight: bold"
+      >
+        選取全部 {{ totalElements }} 筆資料
+      </a>
+      )
+    </span>
+  </div>
+  <div class="batch-actions-group">
+    <button
+      class="btn"
+      style="background-color: #dc3545; color: white; margin-right: 10px"
+      (click)="deleteSelected()"
+    >
+      <i class="fas fa-trash-alt"></i> 刪除選取項目
+    </button>
+
+    <div class="level-update-box">
+      <select #batchLevelSelect>
+        <option value="">-- 更改等級為 --</option>
+        <option *ngFor="let l of levels" [value]="l.name">{{ l.name }}</option>
+      </select>
+      <button class="btn info" (click)="changeLevelSelected(batchLevelSelect.value)">
+        執行變更
+      </button>
+    </div>
+    <div class="divider"></div>
+    <button class="btn secondary" (click)="selectedIds.clear(); isSelectAllPages = false">
+      取消
+    </button>
+  </div>
+</div>
+
+<div class="table-wrap" *ngIf="pagedRecords.length > 0; else empty">
+  <table class="record-table">
+    <thead>
+      <tr>
+        <th>
+          <input
+            type="checkbox"
+            [checked]="
+              isSelectAllPages ||
+              (pagedRecords.length > 0 && selectedIds.size === pagedRecords.length)
+            "
+            (change)="toggleAll($event)"
+          />
+        </th>
+        <th (click)="onSort('id')" style="cursor: pointer">編號</th>
+        <th (click)="onSort('name')" style="cursor: pointer">聯絡人</th>
+        <th (click)="onSort('company')" style="cursor: pointer">公司</th>
+        <th (click)="onSort('level')" style="cursor: pointer">等級</th>
+        <th (click)="onSort('salesEmployee')" style="cursor: pointer">業務員</th>
+        <th (click)="onSort('lastContactDate')" style="cursor: pointer">聯絡日</th>
+        <th (click)="onSort('phone')" style="cursor: pointer">電話</th>
+        <th (click)="onSort('email')" style="cursor: pointer">Email</th>
+        <th style="width: 140px">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of pagedRecords">
+        <td>
+          <input
+            type="checkbox"
+            [checked]="isSelectAllPages || selectedIds.has(r.id)"
+            (change)="toggleSelection(r.id)"
+          />
+        </td>
+        <td>{{ r.id }}</td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.company || '--' }}</td>
+        <td>
+          <span *ngIf="r.level === 'VIP'" style="color: red; font-weight: bold">VIP</span>
+          <span *ngIf="r.level !== 'VIP'">{{ r.level || '(未分級)' }}</span>
+        </td>
+        <td>
+          <ng-container *ngIf="r.salesEmployeeName; else idOnly">
+            {{ r.salesEmployeeName }} ({{ r.salesEmployee }})
+          </ng-container>
+          <ng-template #idOnly>
+            {{ r.salesEmployee }}
+          </ng-template>
+        </td>
+        <td>{{ r.lastContactDate || '(未聯絡)' }}</td>
+        <td>{{ r.phone || '--' }}</td>
+        <td>{{ r.email || '--' }}</td>
+        <td>
+          <button class="btn" style="margin-right: 5px" (click)="navigateToEdit(r.id)" title="編輯">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button
+            class="btn"
+            style="background-color: #dc3545; color: white"
+            (click)="deleteById(r.id)"
+            title="刪除"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #empty>
+  <div
+    class="empty-state"
+    style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px"
+  >
+    <p style="color: #666; font-size: 1.1em; margin-bottom: 0">
+      <i
+        class="fas fa-search"
+        style="font-size: 2em; display: block; margin-bottom: 10px; color: #ccc"
+      ></i>
+      目前沒有符合條件的客戶資料
+    </p>
+  </div>
+</ng-template>

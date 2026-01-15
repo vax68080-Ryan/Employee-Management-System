@@ -1,0 +1,121 @@
+<h2 class="system-title">{{ isEditMode ? '編輯客戶資料' : '新增客戶' }}</h2>
+
+<div class="form-wrapper">
+  <form [formGroup]="form">
+    <div class="form-row" *ngIf="isEditMode">
+      <label>客戶編號</label>
+      <input
+        type="text"
+        formControlName="id"
+        readonly
+        class="readonly-input"
+        style="background-color: #e9ecef"
+      />
+    </div>
+
+    <div class="form-row">
+      <label class="required">聯絡人</label>
+      <input type="text" formControlName="name" placeholder="請輸入姓名" />
+      <span class="error-msg" *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">責任業務員</label>
+      <input
+        type="text"
+        [value]="searchKeyword"
+        (input)="onEmployeeInput($event)"
+        placeholder="請輸入姓名或員編搜尋"
+        list="editEmployeeList"
+        maxlength="20"
+        [class.is-invalid]="
+          form.get('salesEmployee')?.invalid && form.get('salesEmployee')?.touched
+        "
+      />
+      <datalist id="editEmployeeList">
+        <option *ngFor="let emp of employees" [value]="emp.name + ' (' + emp.id + ')'"></option>
+      </datalist>
+      <span
+        class="error-msg"
+        *ngIf="form.get('salesEmployee')?.invalid && form.get('salesEmployee')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">公司名稱</label>
+      <input type="text" formControlName="company" placeholder="例如: 台積電" />
+      <span class="error-msg" *ngIf="form.get('company')?.invalid && form.get('company')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">客戶等級</label>
+      <select formControlName="level">
+        <option value="">請選擇等級</option>
+        <option *ngFor="let l of levels" [value]="l.name">{{ l.name }}</option>
+      </select>
+      <span class="error-msg" *ngIf="form.get('level')?.invalid && form.get('level')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">最後聯絡</label>
+      <input type="date" formControlName="lastContactDate" />
+      <span
+        class="error-msg"
+        *ngIf="form.get('lastContactDate')?.invalid && form.get('lastContactDate')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">電話</label>
+      <input type="tel" formControlName="phone" placeholder="請輸入電話" />
+      <span class="error-msg" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched"
+        >必填且格式需正確</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="請輸入 Email (選填)" />
+      <span class="error-msg" *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+        >Email 格式錯誤</span
+      >
+    </div>
+
+    <div class="form-row">
+      <label class="required">地址</label>
+      <input type="text" formControlName="address" placeholder="請輸入地址" />
+      <span class="error-msg" *ngIf="form.get('address')?.invalid && form.get('address')?.touched"
+        >必填</span
+      >
+    </div>
+
+    <div
+      class="button-group"
+      style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px"
+    >
+      <button type="button" (click)="submit()" style="background-color: #007bff; color: white">
+        <i class="fas fa-save"></i> {{ isEditMode ? '更新資料' : '確認新增' }}
+      </button>
+      <button
+        type="button"
+        class="btn-danger"
+        *ngIf="isEditMode"
+        (click)="deleteCustomer()"
+        style="background-color: #dc3545; color: white"
+      >
+        <i class="fas fa-trash"></i> 刪除此客戶
+      </button>
+      <button type="button" (click)="goBack()" style="background-color: #6c757d; color: white">
+        <i class="fas fa-arrow-left"></i> 返回列表
+      </button>
+    </div>
+  </form>
+</div>

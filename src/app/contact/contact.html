@@ -1,0 +1,23 @@
+<div class="contact-container">
+  <h2>聯絡我們</h2>
+  <p>如果您有任何問題，請填寫下表：</p>
+  
+  <form class="contact-form">
+    <div class="form-group">
+      <label>您的姓名：</label>
+      <input type="text" placeholder="輸入姓名">
+    </div>
+    
+    <div class="form-group">
+      <label>電子郵件：</label>
+      <input type="email" placeholder="example@mail.com">
+    </div>
+    
+    <div class="form-group">
+      <label>訊息內容：</label>
+      <textarea rows="4" placeholder="想對我們說什麼？"></textarea>
+    </div>
+    
+    <button type="button" (click)="submitMessage()">送出訊息</button>
+  </form>
+</div>

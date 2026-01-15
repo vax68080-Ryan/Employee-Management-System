@@ -1,0 +1,51 @@
+<div class="login-wrapper">
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+
+  <div class="login-card">
+    <div class="login-header">
+      <h2>管理系統登入</h2>
+      <p>請輸入您的員工帳號以開始工作</p>
+    </div>
+    
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="id">員工 ID (帳號)</label>
+        <div class="input-icon-wrapper">
+          <input 
+            type="text" 
+            id="id"
+            name="id"
+            [(ngModel)]="loginData.id" 
+            required 
+            placeholder="請輸入 ID (例如: EMP001)"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">密碼</label>
+        <div class="input-icon-wrapper">
+          <input 
+            type="password" 
+            id="password"
+            name="password"
+            [(ngModel)]="loginData.password" 
+            required 
+            placeholder="請輸入密碼"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="!loginForm.valid" class="btn-login">
+        確認登入
+      </button>
+    </form>
+    
+    <div class="login-footer">
+      <p>測試提示：管理員權限請使用最高級帳號</p>
+    </div>
+  </div>
+</div>

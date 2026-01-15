@@ -1,0 +1,256 @@
+<h2 class="system-title">員工管理系統</h2>
+
+<div class="form-wrapper">
+  <form [formGroup]="form" novalidate>
+    <div class="form-row">
+      <label>ID</label>
+      <div style="flex: 1">
+        <input
+          type="text"
+          formControlName="id"
+          [readonly]="editingId"
+          [class.readonly-input]="editingId"
+        />
+        <span
+          class="error-msg"
+          *ngIf="form.get('id')?.invalid && (form.get('id')?.dirty || form.get('id')?.touched)"
+        >
+          <span *ngIf="form.get('id')?.errors?.['required']">ID 為必填欄位</span>
+          <span *ngIf="form.get('id')?.errors?.['maxlength']">ID 太長了 (最多 10 字)</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-row"><label>姓名</label><input type="text" formControlName="name" /></div>
+    <div class="form-row"><label>地址</label><input type="text" formControlName="address" /></div>
+    <div class="form-row">
+      <label>電話</label>
+      <div style="flex: 1">
+        <input type="tel" formControlName="phone" />
+
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('phone')?.invalid && (form.get('phone')?.dirty || form.get('phone')?.touched)
+          "
+        >
+          <span *ngIf="form.get('phone')?.errors?.['required']">電話為必填欄位</span>
+          <span *ngIf="form.get('phone')?.errors?.['pattern']"
+            >電話格式不正確 (僅限數字、+號與橫線)</span
+          >
+        </span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Email</label>
+      <div style="flex: 1">
+        <input type="email" formControlName="email" />
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('email')?.invalid && (form.get('email')?.dirty || form.get('email')?.touched)
+          "
+        >
+          <span *ngIf="form.get('email')?.errors?.['email']">Email 格式不正確</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>部門</label>
+      <div style="flex: 1">
+        <select formControlName="department" style="max-width: 200px">
+          <option value="" disabled>請選擇部門</option>
+
+          <option *ngFor="let dept of departments" [value]="dept.name">
+            {{ dept.name }}
+          </option>
+        </select>
+
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('department')?.invalid &&
+            (form.get('department')?.dirty || form.get('department')?.touched)
+          "
+        >
+          <span *ngIf="form.get('department')?.errors?.['required']">請選擇部門</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>入職日</label>
+      <div style="flex: 1">
+        <input type="date" formControlName="hireDate" />
+
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('hireDate')?.invalid &&
+            (form.get('hireDate')?.dirty || form.get('hireDate')?.touched)
+          "
+        >
+          <span *ngIf="form.get('hireDate')?.errors?.['required']">請選擇入職日期</span>
+        </span>
+      </div>
+    </div>
+    <div class="button-group">
+      <ng-container *ngIf="!editingId">
+        <button type="button" (click)="submit()">送出</button>
+        <button type="button" (click)="search()">查詢</button>
+        <button
+          type="button"
+          (click)="exportData()"
+          style="margin-left: 10px; background-color: #28a745; color: white"
+        >
+          匯出 Excel
+        </button>
+        <button type="button" (click)="showAll()">顯示全部</button>
+      </ng-container>
+
+      <ng-container *ngIf="editingId">
+        <button type="button" (click)="submit()">更新</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-container>
+    </div>
+  </form>
+</div>
+
+<div style="text-align: right; margin: 10px 0">
+  <button
+    type="button"
+    (click)="goToStats()"
+    style="
+      background-color: #17a2b8;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+  >
+    📊 查看部門人數統計圖表
+  </button>
+</div>
+
+<hr />
+
+<h3 class="section-title">員工資料</h3>
+
+<div class="toolbar" *ngIf="!editingId">
+  <div class="pager">
+    <button type="button" (click)="prevPage()" [disabled]="currentPage <= 1">上一頁</button>
+    <span>第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁</span>
+    <button type="button" (click)="nextPage()" [disabled]="currentPage >= totalPages">
+      下一頁
+    </button>
+  </div>
+
+  <div class="page-size">
+    每頁
+    <select [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+      <option [ngValue]="3">3</option>
+      <option [ngValue]="5">5</option>
+      <option [ngValue]="10">10</option>
+    </select>
+    筆
+  </div>
+</div>
+
+<div class="search-info" *ngIf="isSearchMode && !editingId">
+  <p>
+    🔍 正在顯示搜尋結果 (共 {{ totalElements }} 筆)
+    <button type="button" (click)="showAll()">清除搜尋</button>
+  </p>
+</div>
+
+<div class="table-wrap" *ngIf="pagedRecords.length > 0; else empty">
+  <table class="record-table">
+    <thead>
+      <tr>
+        <th style="width: 110px; cursor: pointer" (click)="onSort('id')">
+          ID
+          <span *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="width: 120px; cursor: pointer" (click)="onSort('name')">
+          姓名
+          <span *ngIf="sortColumn === 'name'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="width: 100px; cursor: pointer" (click)="onSort('department')">
+          部門
+          <span *ngIf="sortColumn === 'department'">{{
+            sortDirection === 'asc' ? '⬆️' : '⬇️'
+          }}</span>
+        </th>
+
+        <th style="width: 150px; cursor: pointer" (click)="onSort('hireDate')">
+          入職日
+          <span *ngIf="sortColumn === 'hireDate'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="width: 160px; cursor: pointer" (click)="onSort('phone')">
+          電話
+          <span *ngIf="sortColumn === 'phone'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="cursor: pointer" (click)="onSort('address')">
+          地址
+          <span *ngIf="sortColumn === 'address'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="width: 200px; cursor: pointer" (click)="onSort('email')">
+          Email
+          <span *ngIf="sortColumn === 'email'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
+        <th style="width: 140px">操作</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let r of pagedRecords">
+        <td>{{ r.id }}</td>
+        <td>{{ r.name }}</td>
+
+        <td>
+          <span *ngIf="r.department">{{ r.department }}</span>
+          <span *ngIf="!r.department" class="empty-val">(未分配)</span>
+        </td>
+
+        <td>{{ r.hireDate }}</td>
+
+        <td>
+          <span *ngIf="r.phone">{{ r.phone }}</span>
+          <span *ngIf="!r.phone" class="empty-val">(未填寫)</span>
+        </td>
+
+        <td class="td-address">
+          <span *ngIf="r.address">{{ r.address }}</span>
+          <span *ngIf="!r.address" class="empty-val">(未填寫)</span>
+        </td>
+
+        <td>
+          <span *ngIf="r.email">{{ r.email }}</span>
+          <span *ngIf="!r.email" class="empty-val">(未填寫)</span>
+        </td>
+
+        <td>
+          <button type="button" class="btn" (click)="startEdit(r)">
+            <i class="fas fa-pen"></i> 編輯
+          </button>
+          <button type="button" class="btn danger" (click)="deleteById(r.id)">
+            <i class="fas fa-trash"></i> 刪除
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #empty>
+  <p class="empty">目前沒有資料</p>
+</ng-template>
+
+<div class="toast-container" *ngIf="toastMessage" [class.error]="toastType === 'error'">
+  {{ toastMessage }}
+</div>

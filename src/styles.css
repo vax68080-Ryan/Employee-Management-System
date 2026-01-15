@@ -1,0 +1,470 @@
+@import '@fortawesome/fontawesome-free/css/all.css';
+/* You can add global styles to this file, and also import other style files */
+.form-wrapper {
+  margin-left: 40px; /* 想移多右就調這個 */
+}
+
+button,
+.btn {
+  font-size: 20px;
+  padding: 8px 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-top: 15px;
+}
+
+
+
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px; /* 加大行距 */
+}
+
+.form-row label {
+  width: 180px; /* 原本 90px -> 改為 180px (避免文字折行) */
+  margin-right: 32px; /* 原本 16px -> 改為 32px */
+  text-align: right;
+  font-size: 32px; /* 原本 16px */
+  font-weight: 500;
+}
+
+.form-row input {
+  width: 440px; /* 原本 220px -> 改為 440px */
+}
+
+small {
+  margin-left: 16px; /* ← 這就是你要的空白距離 */
+  display: inline-block;
+  font-size: 14px; /* 比主文字小一點即可 */
+  color: #555;
+  margin-left: 16px;
+}
+
+/* 整個表單的基本字體大小 */
+form {
+  font-size: 32px;
+}
+
+/* 標籤（ID、人名、地址…） */
+label {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 輸入框 */
+input,
+select {
+  width: 100%;
+  padding: 16px; /* 原本 8px -> 改為 16px */
+  font-size: 32px; /* 字體放大 */
+  border: 1px solid #ccc;
+  border-radius: 8px; /* 圓角稍微加大 */
+  box-sizing: border-box;
+}
+
+/* 讓選單高度跟 input 一致 */
+select {
+  height: auto; /* 原本 38px 會卡住大字體，改為 auto 讓 padding 撐開 */
+  background-color: white;
+}
+
+/* 標題 */
+h2,
+h3,
+.section-title {
+  font-size: 40px; /* 原本 20px */
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* 已送出紀錄 */
+ul li {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 16px;
+}
+
+.pagination button {
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+
+.pager-info {
+  font-size: 14px;
+}
+
+.page-size {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.record-card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.record-id {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.record-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+
+
+.record-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+
+.field {
+  display: flex;
+  gap: 10px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.k {
+  width: 50px;
+  font-weight: 700;
+  color: #333;
+}
+
+.v {
+  color: #111;
+  word-break: break-word;
+}
+
+.empty {
+  margin-top: 10px;
+  color: #666;
+}
+
+/* =========================================
+   分頁與工具列
+   ========================================= */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 28px; /* 分頁文字放大 */
+}
+
+/* 分頁下拉選單 */
+.page-size select {
+  width: auto;
+  padding: 8px;
+  font-size: 24px;
+}
+
+/* 搜尋結果提示 */
+.search-info p {
+  font-size: 28px;
+}
+
+.table-wrap {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 28px; /* 原本 14px -> 改為 28px */
+}
+
+/* 設定表頭樣式 */
+.record-table thead th {
+  text-align: center;
+  padding: 10px;
+  background: #f4f4f4;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  /* 👇 新增：預設讓所有 th 都有手指游標 (除了操作欄) */
+  cursor: pointer;
+  user-select: none; /* 防止一直點擊時選取到文字 */
+}
+
+/* 👇 如果「操作」欄位不想有手指游標，可以給它一個特定的 class 或用 :last-child */
+.record-table thead th:last-child {
+  cursor: default;
+}
+
+.record-table tbody td {
+  text-align: center;
+  padding: 20px; /* 加大內距 */
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.record-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.td-address {
+  word-break: break-word;
+}
+
+.btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn.danger {
+  color: #a40000;
+}
+
+/* 當 input 被禁用時的樣式 */
+input:disabled {
+  background-color: #eeeeee; /* 淺灰色 */
+  cursor: not-allowed; /* 滑鼠游標顯示禁止符號 */
+  color: #666666; /* 文字顏色變淡 */
+  border: 1px solid #ccc;
+}
+
+/* Employee-form.css */
+input[readonly] {
+  background-color: #e9ecef; /* 灰色背景 */
+  cursor: not-allowed; /* 禁止符號游標 */
+  color: #6c757d;
+}
+
+/* Toast 容器定位 */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 40px;
+  background-color: #4caf50; /* 預設綠色 (成功) */
+  color: white;
+  padding: 20px 40px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 9999; /* 確保在最上層 */
+  font-size: 32px;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* 失敗/錯誤時的樣式 (紅色) */
+.toast-container.error {
+  background-color: #f44336;
+}
+
+/* 簡單的滑入動畫 */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 輸入框驗證錯誤時的邊框顏色 */
+input.ng-invalid.ng-touched {
+  border-color: #f44336;
+}
+
+/* 錯誤文字 */
+.error-msg {
+  color: #f44336;
+  font-size: 24px; /* 原本 12px -> 改為 24px */
+  margin-top: 8px;
+  display: block;
+}
+
+/* 空值資料的樣式 */
+.empty-val {
+  color: #999; /* 灰色文字 */
+  font-style: italic; /* 斜體，區分正常資料 */
+  font-size: 14px;
+}
+
+/* 放大日曆點擊圖示 */
+
+/* 讓整個 input 區域都對日曆開啟有效 */
+input[type='date'] {
+  position: relative;
+}
+
+/* 透過透明化的方式將點擊區域擴張到整個輸入框 */
+input[type='date']::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  color: transparent;
+  background: transparent;
+}
+
+/* 放大表格內的 Checkbox */
+.record-table input[type='checkbox'] {
+  transform: scale(1.5); /* 👈 放大 1.5 倍，您可以根據需求調整為 1.2 ~ 2.0 */
+  cursor: pointer;
+  margin: 5px;
+}
+
+/* 增加 Checkbox 所在欄位的寬度與對齊 */
+.record-table th:first-child,
+.record-table td:first-child {
+  width: 50px; /* 👈 設定固定寬度防止擠壓 */
+  text-align: center; /* 👈 置中對齊 */
+  vertical-align: middle;
+}
+
+/* 當滑鼠移到該列時，滑鼠指針變為手型，增加互動感 */
+.record-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.batch-info {
+  color: #856404;
+  font-size: 1.1rem;
+}
+
+.batch-info strong {
+  font-size: 1.3rem;
+  color: #e67e22;
+  margin: 0 5px;
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.batch-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.level-update-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.level-update-box select {
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #dee2e6;
+}
+
+.btn.info {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.batch-toolbar {
+  display: flex;
+  justify-content: space-between; /* 讓資訊靠左，按鈕靠右 */
+  align-items: center;
+  background-color: #fff9db;
+  border: 1px solid #ffec99;
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.batch-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+/* 匯出按鈕樣式 */
+.btn-export {
+  background-color: #28a745 !important; /* Excel 綠色 */
+  color: white !important;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.btn-export:hover {
+  background-color: #218838 !important;
+}
+
+.btn-export i {
+  margin-right: 5px; /* 圖示與文字的間距 */
+}

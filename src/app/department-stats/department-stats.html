@@ -1,0 +1,13 @@
+<div class="container">
+  <button class="back-btn" (click)="goBack()">⬅️ 返回員工列表</button>
+  
+  <h2 style="text-align: center;">部門人數統計圖表</h2>
+
+  <div class="chart-container">
+    <canvas baseChart 
+      [data]="barChartData" 
+      [options]="barChartOptions" 
+      [type]="barChartType">
+    </canvas>
+  </div>
+</div>
