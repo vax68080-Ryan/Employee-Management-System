@@ -280,9 +280,37 @@ export class CustomerListComponent implements OnInit {
   }
 
   exportData() {
-    const criteria = this.searchForm.getRawValue();
+    // 1. 先準備原本的搜尋條件 (作為預設值)
+    let criteria: any = {};
+    const rawCriteria = this.searchForm.getRawValue();
+
+    // 過濾空值 (保留你原本的邏輯)
+    for (const key in rawCriteria) {
+      const value = rawCriteria[key];
+      if (value !== null && value !== undefined && value !== '') {
+        criteria[key] = value;
+      }
+    }
+
+    // 2. ⭐ 新增判斷邏輯：處理勾選匯出 ⭐
+    // 如果使用者有勾選 (selectedIds > 0)，且並非「全選所有頁面」
+    if (this.selectedIds.size > 0 && !this.isSelectAllPages) {
+      // 取得勾選的 ID 陣列
+      const ids = Array.from(this.selectedIds);
+
+      // 覆寫 criteria，只傳送 ids 給後端
+      // (注意：你的後端 DTO 必須要能接收 'ids' 這個欄位)
+      criteria = { ids: ids };
+
+      console.log('匯出模式：僅匯出勾選的資料', criteria);
+    } else {
+      // 否則維持原樣 (匯出符合當前搜尋條件的所有資料)
+      console.log('匯出模式：匯出搜尋結果', criteria);
+    }
+
     Swal.fire({ title: '匯出中...', didOpen: () => Swal.showLoading() });
 
+    // 3. 發送請求
     this.customerService.exportToExcel(criteria).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);

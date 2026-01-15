@@ -77,26 +77,45 @@ export class CustomerService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  exportToExcel(criteria: any): Observable<Blob> {
+  exportToExcel(criteria: any) {
+    // 如果 criteria 裡面有 ids 陣列 (例如 ['C001', 'C002'])，Angular 的 HttpParams 會自動處理
+    // 但為了配合後端 Map<String, String> 接收，建議手動轉成逗號分隔字串
+
     let params = new HttpParams();
-    Object.keys(criteria).forEach((key) => {
-      if (criteria[key]) {
-        params = params.set(key, criteria[key]);
+    for (const key in criteria) {
+      if (criteria.hasOwnProperty(key)) {
+        const value = criteria[key];
+
+        if (Array.isArray(value)) {
+          // ⭐ 將陣列轉成 "id1,id2,id3" 字串
+          params = params.set(key, value.join(','));
+        } else {
+          params = params.set(key, value);
+        }
       }
+    }
+
+    return this.http.get(`${this.apiUrl}/export`, {
+      params: params, // ⭐ 必須放在 params 裡
+      responseType: 'blob',
     });
-    return this.http.get(`${this.apiUrl}/export`, { params, responseType: 'blob' });
   }
 
   deleteBatch(ids: string[]): Observable<any> {
     return this.http.request('delete', `${this.apiUrl}/batch`, { body: ids });
   }
 
-  updateLevelBatch(ids: string[], level: string, selectAll: boolean = false, criteria: any = null): Observable<any> {
+  updateLevelBatch(
+    ids: string[],
+    level: string,
+    selectAll: boolean = false,
+    criteria: any = null
+  ): Observable<any> {
     const payload = {
       ids: ids,
       level: level,
       selectAllPages: selectAll,
-      criteria: criteria
+      criteria: criteria,
     };
     return this.http.patch(`${this.apiUrl}/batch-level`, payload);
   }
