@@ -15,17 +15,40 @@ import { EmployeeService } from '../employee-form/employee.service';
   styles: [
     `
       .chart-container {
-        width: 95%; /* 👈 改成 95%，讓它佔據更多螢幕寬度 */
-        max-width: 1400px; /* 👈 最大寬度放寬到 1400px (原本 800px) */
-        height: 600px; /* 👈 直接指定高度，讓圖表變高 */
+        width: 95%;
+        max-width: 1400px;
+        height: 600px;
         margin: 30px auto;
         display: block;
       }
+
+      /* 新增：用來置中按鈕的容器 */
+      .center-container {
+        text-align: center; /* 讓內容水平置中 */
+        margin-bottom: 50px; /* 距離底部留點空間 */
+      }
+
       .back-btn {
-        margin: 20px;
-        padding: 10px 20px; /* 按鈕也稍微變大一點 */
-        font-size: 16px; /* 按鈕字體變大 */
+        margin-top: 20px;
+        padding: 15px 40px; /* 👈 內距加大，讓按鈕變胖 */
+        font-size: 24px; /* 👈 字體加大到 24px */
+        font-weight: bold; /* 👈 字體加粗 */
         cursor: pointer;
+        background-color: #6c757d; /* 灰色背景 (可依喜好改成藍色 #007bff) */
+        color: white; /* 白字 */
+        border: none; /* 去除邊框 */
+        border-radius: 8px; /* 圓角看起來比較現代 */
+        transition: transform 0.2s, background-color 0.2s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 加一點陰影更有立體感 */
+      }
+
+      .back-btn:hover {
+        background-color: #5a6268; /* 滑鼠移上去變深色 */
+        transform: scale(1.05); /* 滑鼠移上去稍微放大 */
+      }
+
+      .back-btn i {
+        margin-right: 10px; /* 圖示跟文字的距離 */
       }
     `,
   ],
@@ -120,6 +143,6 @@ export class DepartmentStatsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/Employee']);// 假設首頁路徑是 '/'，請依實際情況調整
+    this.router.navigate(['/employees']); // 假設首頁路徑是 '/'，請依實際情況調整
   }
 }

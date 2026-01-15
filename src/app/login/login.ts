@@ -13,8 +13,8 @@ import { CommonModule } from '@angular/common';
 })
 export class Login {
   loginData = {
-    id: '', 
-    password: '', 
+    id: '',
+    password: '',
   };
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -22,6 +22,9 @@ export class Login {
   onLogin() {
     this.http.post<any>('http://localhost:8080/api/auth/login', this.loginData).subscribe({
       next: (res) => {
+        // 👇👇👇 加入這行來抓兇手 👇👇👇
+        console.log('【登入除錯】後端回傳的完整資料:', res);
+
         // 👇 【關鍵修改】改成 localStorage，這樣其他頁面才讀得到權限！
         localStorage.setItem('token', res.token);
         localStorage.setItem('userLevel', res.level.toString());

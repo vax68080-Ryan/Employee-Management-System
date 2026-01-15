@@ -3,7 +3,7 @@
 <div class="form-wrapper">
   <form [formGroup]="form" novalidate>
     <div class="form-row">
-      <label>ID</label>
+      <label>ID<span style="color: red">*</span></label>
       <div style="flex: 1">
         <input
           type="text"
@@ -20,10 +20,42 @@
         </span>
       </div>
     </div>
-    <div class="form-row"><label>姓名</label><input type="text" formControlName="name" /></div>
-    <div class="form-row"><label>地址</label><input type="text" formControlName="address" /></div>
     <div class="form-row">
-      <label>電話</label>
+      <label>姓名<span style="color: red">*</span></label
+      ><input type="text" formControlName="name" />
+    </div>
+    <div class="form-row">
+      <label>密碼 <span *ngIf="!editingId" style="color: red">*</span></label>
+      <input
+        type="password"
+        formControlName="password"
+        [placeholder]="editingId ? '若不修改請留空' : '請輸入初始密碼'"
+      />
+    </div>
+    <div class="error-msg" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+      密碼為必填欄位
+    </div>
+    <div class="form-row">
+      <label>地址 <span style="color: red">*</span></label>
+
+      <div style="flex: 1">
+        <input type="text" formControlName="address" />
+
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('address')?.invalid &&
+            (form.get('address')?.dirty || form.get('address')?.touched)
+          "
+        >
+          <span *ngIf="form.get('address')?.errors?.['required']">地址為必填欄位</span>
+          <span *ngIf="form.get('address')?.errors?.['maxlength']">地址太長了</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>電話 <span style="color: red">*</span></label>
+
       <div style="flex: 1">
         <input type="tel" formControlName="phone" />
 
@@ -34,6 +66,7 @@
           "
         >
           <span *ngIf="form.get('phone')?.errors?.['required']">電話為必填欄位</span>
+
           <span *ngIf="form.get('phone')?.errors?.['pattern']"
             >電話格式不正確 (僅限數字、+號與橫線)</span
           >
@@ -55,7 +88,7 @@
       </div>
     </div>
     <div class="form-row">
-      <label>部門</label>
+      <label>部門<span style="color: red">*</span></label>
       <div style="flex: 1">
         <select formControlName="department" style="max-width: 200px">
           <option value="" disabled>請選擇部門</option>
@@ -77,6 +110,31 @@
       </div>
     </div>
     <div class="form-row">
+      <label>等級 <span style="color: red">*</span></label>
+
+      <div style="flex: 1">
+        <select formControlName="level" style="max-width: 200px">
+          <option [ngValue]="null" disabled>請選擇等級</option>
+
+          <option [ngValue]="1">管理員 (1)</option>
+          <option [ngValue]="2">一般員工 (2)</option>
+        </select>
+
+        <div class="hint" style="font-size: 0.8em; color: #666; margin-top: 5px">
+          * 管理員擁有新增、修改、刪除員工資料的權限
+        </div>
+
+        <span
+          class="error-msg"
+          *ngIf="
+            form.get('level')?.invalid && (form.get('level')?.dirty || form.get('level')?.touched)
+          "
+        >
+          <span *ngIf="form.get('level')?.errors?.['required']">請選擇等級</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-row">
       <label>入職日</label>
       <div style="flex: 1">
         <input type="date" formControlName="hireDate" />
@@ -94,7 +152,7 @@
     </div>
     <div class="button-group">
       <ng-container *ngIf="!editingId">
-        <button type="button" (click)="submit()">送出</button>
+        <button type="button" (click)="submit()">新增</button>
         <button type="button" (click)="search()">查詢</button>
         <button
           type="button"
@@ -104,6 +162,24 @@
           匯出 Excel
         </button>
         <button type="button" (click)="showAll()">顯示全部</button>
+        <button
+          type="button"
+          (click)="goToStats()"
+          style="
+            margin-left: 10px; /* 👈 改這裡：只隔開 10px，不推到最右邊 */
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex; /* 讓圖示跟文字對齊 */
+            align-items: center;
+            gap: 5px;
+          "
+        >
+          📊 部門統計圖表
+        </button>
       </ng-container>
 
       <ng-container *ngIf="editingId">
@@ -112,23 +188,6 @@
       </ng-container>
     </div>
   </form>
-</div>
-
-<div style="text-align: right; margin: 10px 0">
-  <button
-    type="button"
-    (click)="goToStats()"
-    style="
-      background-color: #17a2b8;
-      color: white;
-      padding: 8px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    "
-  >
-    📊 查看部門人數統計圖表
-  </button>
 </div>
 
 <hr />
@@ -183,6 +242,11 @@
           }}</span>
         </th>
 
+        <th style="width: 80px; cursor: pointer" (click)="onSort('level')">
+          等級
+          <span *ngIf="sortColumn === 'level'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+        </th>
+
         <th style="width: 150px; cursor: pointer" (click)="onSort('hireDate')">
           入職日
           <span *ngIf="sortColumn === 'hireDate'">{{ sortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
@@ -215,6 +279,11 @@
         <td>
           <span *ngIf="r.department">{{ r.department }}</span>
           <span *ngIf="!r.department" class="empty-val">(未分配)</span>
+        </td>
+
+        <td>
+          <span *ngIf="r.level === 1" style="color: red; font-weight: bold">管理員</span>
+          <span *ngIf="r.level !== 1">一般</span>
         </td>
 
         <td>{{ r.hireDate }}</td>

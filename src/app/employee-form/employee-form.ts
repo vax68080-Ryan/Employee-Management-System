@@ -51,11 +51,11 @@ export class EmployeeFormComponent implements OnInit {
       id: ['', [Validators.required, Validators.maxLength(10)]],
       name: ['', [Validators.required, Validators.maxLength(50)]],
       password: [''],
-      level: [2, [Validators.required]],
+      level: [null, [Validators.required]],
       hireDate: ['', [Validators.required]],
       department: ['', [Validators.required]],
-      address: ['', [Validators.maxLength(200)]],
-      phone: ['', [Validators.pattern(/^[+]?[\d\s-]{1,20}$/)]],
+      address: ['', [Validators.required, Validators.maxLength(200)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[+]?[\d\s-]{1,20}$/)]],
       email: ['', [Validators.email, Validators.maxLength(100)]],
     });
   }
@@ -113,46 +113,78 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   submit() {
-    // 👇 關鍵：不使用 this.userLevel，直接從瀏覽器倉庫拿最新的資料！
+    // 1. 權限檢查
     const currentLevel = Number(localStorage.getItem('userLevel'));
-
-    // (選用) 再次確認
-    console.log(`[即時檢查] LocalStorage: ${currentLevel}, 記憶體: ${this.userLevel}`);
-
     if (currentLevel !== 1) {
       this.showToast('權限不足：只有最高管理員可編輯資料', 'error');
       return;
     }
+
+    // 2. 表單驗證
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.showToast('表單資料有誤，請檢查紅色欄位', 'error');
       return;
     }
+
     const formData = this.form.getRawValue();
 
+    // 3. 判斷是 更新 還是 新增
     if (this.editingId) {
+      // === 更新模式 (Update) ===
       this.employeeService.updateEmployee(formData.id, formData).subscribe({
         next: () => {
           this.showToast('更新成功！', 'success');
           this.editingId = null;
           this.form.get('id')?.enable();
-          this.showAll();
+          this.showAll(); // 更新完顯示全部是合理的
         },
-        // 👇 改用 errorService
         error: (err) => this.errorService.handle('更新失敗', err),
       });
     } else {
+      // === 新增模式 (Create) ===
       if (!formData.password) {
         this.showToast('新增員工必須設定初始密碼', 'error');
         return;
       }
+
       this.employeeService.addEmployee(formData).subscribe({
         next: () => {
           this.showToast('新增成功！', 'success');
-          this.showAll();
+
+          // ❌ 原本寫法：顯示全部 (移除這行)
+          // this.showAll();
+
+          // ✅ 修改寫法：只顯示剛剛新增的那一筆
+          const newId = formData.id; // 1. 先記住剛剛新增的 ID
+
+          // 2. 重置表單 (把姓名、電話等清空，避免使用者以為還沒送出)
+          this.form.reset({ level: null });
+
+          // 3. 把 ID 填回去 (這樣 load() 的時候就會變成搜尋這個 ID)
+          this.form.patchValue({ id: newId });
+
+          // 4. 設定為搜尋模式
+          this.isSearchMode = true;
+          this.currentPage = 1;
+
+          // 5. 重新載入 (此時因為表單上有 ID，後端只會回傳這一筆)
+          this.load();
         },
-        // 👇 改用 errorService
-        error: (err) => this.errorService.handle('新增失敗', err),
+        error: (err) => {
+          if (err.status === 409 || err.status === 400) {
+            let msg = '新增失敗，資料可能重複';
+            if (typeof err.error === 'string') {
+              msg = err.error;
+            } else if (err.error && err.error.message) {
+              msg = err.error.message;
+            }
+            this.showToast(msg, 'error');
+            this.cdr.detectChanges();
+          } else {
+            this.errorService.handle('新增失敗', err);
+          }
+        },
       });
     }
   }
@@ -222,7 +254,7 @@ export class EmployeeFormComponent implements OnInit {
     this.load();
   }
   showAll() {
-    this.form.reset({ level: 2 });
+    this.form.reset({ level: null });
     this.form.get('id')?.enable();
     this.editingId = null;
     this.currentPage = 1;
@@ -240,8 +272,9 @@ export class EmployeeFormComponent implements OnInit {
     this.load();
   }
   onPageSizeChange(newSize: number) {
-    this.pageSize = newSize;
+    this.pageSize = Number(newSize);
     this.currentPage = 1;
+    console.log('切換每頁筆數:', this.pageSize); // Debug 用
     this.load();
   }
   prevPage() {

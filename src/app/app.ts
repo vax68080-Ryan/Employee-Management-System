@@ -34,6 +34,9 @@ export class AppComponent implements OnInit {
     const savedName = localStorage.getItem('userName');
     const savedLevel = localStorage.getItem('userLevel');
 
+        // 👇 加入這行來抓兇手
+    console.log(`[App重整] 讀取到的 Level: ${savedLevel}, 轉型後: ${Number(savedLevel)}`);
+
     this.userName = savedName || '';
     this.userLevel = savedLevel ? Number(savedLevel) : 2;
   }
