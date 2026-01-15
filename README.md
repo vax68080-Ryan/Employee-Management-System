@@ -29,11 +29,24 @@
 
 ## 🛠️ 如何在本機執行
 
+### 環境需求 (Prerequisites)
+確保你的電腦已安裝：
+- Java JDK 17+
+- Node.js & npm
+- MySQL Server
+
 ### 後端啟動
 後端原始碼：[點我觀看](https://github.com/vax68080-Ryan/Employee-Management-Backend.git)
 1. 確保已安裝 JDK 17 與 MySQL。
 2. 設定 `application.properties` 中的資料庫連線資訊。
 3. 執行 `./mvnw spring-boot:run`。
+
+### 資料庫設定 (Database Setup)
+1. 進入 `backend-api` 資料夾。
+2. 找到資料庫備份檔：`backup_20260115.sql` (或其他最新日期的 .sql 檔)。
+3. 使用 MySQL Workbench 或指令匯入此檔案以建立資料庫與資料表。
+   - 資料庫名稱預設為：`my_angular_db` (請確認 SQL 檔內的設定)
+4. 確認 `src/main/resources/application.properties` 內的資料庫帳號密碼是否正確。
 
 ### 前端啟動
 前端原始碼：[點我觀看](https://github.com/vax68080-Ryan/Employee-Management-System.git)
